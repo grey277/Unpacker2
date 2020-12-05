@@ -24,7 +24,7 @@ jobs:
 
     - name: download  ROOT (for ubuntu-18.04)
       run: |
-        wget http://sphinx.if.uj.edu.pl/framework/root-6-20-06-ubuntu18-jpet.tar.gz 
+        wget http://sphinx.if.uj.edu.pl/framework/root-6-20-06-ubuntu18-jpet.tar.gz
         tar xzf root-6-20-06-ubuntu18-jpet.tar.gz
       if: matrix.os == 'ubuntu-18.04'
 
@@ -40,10 +40,20 @@ jobs:
         cd build
         make
         ctest
-    - name: run pseudotests 
+    - name: run pseudotests
       run: |
         source root/bin/thisroot.sh
         cd build
         ctest
         cd tests
         grep -rwnl . -e 'Error' | xargs cat
+    - name: Make package
+      run: |
+        cd build
+        make package
+
+		- name: Upload package
+      uses: actions/upload-artifact@v2
+      with:
+        name: Unpacker.deb
+        path: build/Unpacker2*.deb
